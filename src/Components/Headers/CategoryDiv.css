@@ -1,0 +1,18 @@
+.category-title {
+    font-weight: bold;
+    color: #333; /* Set your desired color */
+    margin-bottom: 30px;
+  }
+  
+  .category-li {
+    list-style-type: none;
+    margin-bottom: 10px;
+    color: #666; /* Set your desired color */
+    cursor: pointer;
+  }
+  
+  .category-li:hover {
+    color: #000; 
+    text-decoration: underline;
+  }
+  
