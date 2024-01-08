@@ -1,8 +1,21 @@
-import React from "react";
+import React, { useState } from "react";
 import { FaSearch } from "react-icons/fa";
-import { Link } from "react-router-dom";
+import { Link,useNavigate } from "react-router-dom";
+import { UserAuthConsumer } from "../../Global-Context/AuthContext";
 
 function Navbar() {
+  const { user, logOut } = UserAuthConsumer();
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    try {
+      await logOut();
+      navigate("/Login");
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <div className="bg-slate-100">
       <div className="flex  items-center p-2 ">
@@ -31,10 +44,20 @@ function Navbar() {
             <option>ENGLISH</option>
             <option>Hindi</option>
           </select>
-          {/* Dont forgot to check the status of the user*/}
-          <Link to="/login">
-            <h1 className="text-lg font-bold ">Login</h1>
-          </Link>
+          {user?.email ? (
+            <select
+              className="bg-slate-100 cursor-pointer"
+              onChange={handleLogout}
+            >
+              <option>{user.displayName || "UserName"}</option>
+              <option>Logout</option>
+            </select>
+          ) : (
+            <Link to="/login">
+              <h1 className="text-lg font-bold ">Login</h1>
+            </Link>
+          )}
+
           <button className="bg-white py-2 px-5 rounded-full shadow uppercase font-bold flex items-center gap-2">
             + Sell
           </button>

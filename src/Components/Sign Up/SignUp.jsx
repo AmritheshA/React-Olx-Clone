@@ -1,7 +1,36 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { UserAuthConsumer } from "../../Global-Context/AuthContext";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
-const Login = () => {
+const SignUp = () => {
+  const [email, setemail] = useState("");
+  const [password, setpassword] = useState("");
+  const { signUp } = UserAuthConsumer();
+  const navigator = useNavigate();
+
+  const handleEmail = (eve) => {
+    setemail(eve.target.value);
+  };
+
+  const handlePassword = (eve) => {
+    setpassword(eve.target.value);
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      await signUp(email, password);
+      navigator("/");
+    } catch (error) {
+      toast.error(error.message, {
+        position: "top-center",
+      });
+      console.log(error);
+    }
+  };
+
   return (
     <div
       className="flex items-center justify-center min-h-screen"
@@ -13,7 +42,7 @@ const Login = () => {
         <h2 className="text-3xl font-bold text-olx-blue mb-6">
           Welcome To Our Family
         </h2>
-        <form>
+        <form onSubmit={handleSubmit}>
           <div className="mb-6">
             <label
               htmlFor="email"
@@ -25,6 +54,7 @@ const Login = () => {
               type="email"
               id="email"
               name="email"
+              onChange={handleEmail}
               className="mt-1 p-3 w-full border rounded-md focus:outline-none focus:border-olx-blue"
               placeholder="Enter your email"
             />
@@ -40,6 +70,7 @@ const Login = () => {
               type="password"
               id="password"
               name="password"
+              onChange={handlePassword}
               className="mt-1 p-3 w-full border rounded-md focus:outline-none focus:border-olx-blue"
               placeholder="Enter your password"
             />
@@ -51,6 +82,7 @@ const Login = () => {
             Sign Up
           </button>
         </form>
+        <ToastContainer />
         <p className="mt-4 text-sm text-gray-600">
           Already a member ?
           <Link to="/login" className="text-[#0056b3]">
@@ -62,4 +94,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default SignUp;
