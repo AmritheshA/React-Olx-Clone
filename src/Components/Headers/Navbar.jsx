@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { FaSearch } from "react-icons/fa";
-import { Link,useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { UserAuthConsumer } from "../../Global-Context/AuthContext";
 
 function Navbar() {
@@ -49,7 +49,7 @@ function Navbar() {
               className="bg-slate-100 cursor-pointer"
               onChange={handleLogout}
             >
-              <option>{user.displayName || "UserName"}</option>
+              <option>{user.displayName}</option>
               <option>Logout</option>
             </select>
           ) : (
@@ -57,10 +57,11 @@ function Navbar() {
               <h1 className="text-lg font-bold ">Login</h1>
             </Link>
           )}
-
-          <button className="bg-white py-2 px-5 rounded-full shadow uppercase font-bold flex items-center gap-2">
-            + Sell
-          </button>
+          <Link to="/add-product">
+            <button className="bg-white py-2 px-5 rounded-full shadow uppercase font-bold flex items-center gap-2">
+              + Sell
+            </button>
+          </Link>
         </div>
       </div>
       <div className="p2"></div>

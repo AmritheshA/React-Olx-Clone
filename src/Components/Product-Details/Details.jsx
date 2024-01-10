@@ -1,5 +1,7 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Footer from "../Footer/Footer";
+import { database } from "../../firebaseConfig";
+import { collection, getDoc,doc } from "firebase/firestore";
 import {
   FaChevronLeft,
   FaChevronRight,
@@ -9,7 +11,37 @@ import {
 import Navbar from "../Headers/Navbar";
 
 const Details = () => {
-  const images = ["car.jpeg", "car2.jpeg", "photo1.jpg", "photo2.jpg"];
+  const [products, setProducts] = useState();
+
+  const queryString = window.location.search;
+
+  const searchParams = new URLSearchParams(queryString);
+
+  const productId = searchParams.get("productId");
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const specificDocRef = doc(database, "product", productId);
+
+        const docSnapshot = await getDoc(specificDocRef);
+
+        if (docSnapshot.exists()) {
+          const data = docSnapshot.data();
+          setProducts(data);
+        } else {
+          console.log("Document not found");
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error.message);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  const images = [products?.imageUrl];
+  console.log("Type of images", typeof images);
   const [currentIndex, setCurrentIndex] = useState(0);
 
   const handlePrevClick = () => {
@@ -39,7 +71,7 @@ const Details = () => {
               <FaChevronLeft />
             </button>
             <div className="flex justify-center overflow-scroll">
-              {images.map((image, index) => (
+              {images?.map((image, index) => (
                 <img
                   key={index}
                   className={`h-full ${
@@ -71,15 +103,20 @@ const Details = () => {
             <div className="flex w-full justify-between h-[200px]">
               <div className="bg-white w-[63%] h-2/3 rounded m-5 shadow-md">
                 <h1 className="font-bold text-3xl m-4">
-                  Mercedes-Benz Gla (2017)
+                  {products?.productName}
                 </h1>
                 <h1 className="text-gray-600/80 m-4">
-                  DIESEL | 58000.0KM | AUTOMATIC
+                  {products?.details[0]} | {products?.details[1]} |
+                  {products?.details[2]}
                 </h1>
-                <h1 className="text-gray-600/80 m-4">Category : Car</h1>
+                <h1 className="text-gray-600/80 m-4">
+                  Category : {products?.categorie}
+                </h1>
               </div>
               <div className="bg-white w-[35%] h-2/3 m-5 rounded shadow-md ">
-                <h1 className="font-bold text-4xl m-3">$ 3100000</h1>
+                <h1 className="font-bold text-4xl m-3">
+                  ₹ {products?.prize}
+                </h1>
                 <div className="flex justify-center">
                   <button className="border-2 border-black text-white rounded-lg w-[75%] h-11 bg-red-500">
                     Make Offer
@@ -93,13 +130,13 @@ const Details = () => {
                   OverView
                 </h1>
                 <h1 className="text-black/60 m-4 font-semibold">
-                  2nd Owner | Nadapuram, Kozhikode
+                  {products?.overView[0]} | {products?.overView[1]}
                 </h1>
               </div>
-              <div className="bg-white w-[35%] h-[85%] m-5 rounded">
+              {/* <div className="bg-white w-[35%] h-[85%] m-5 rounded">
                 <div className="flex items-center m-4 border-2  ">
                   <img
-                    src="./car.jpeg"
+                    src={products[0]?.imageUrl}
                     className="w-[65px] rounded-[100%]  h-[65px]"
                   ></img>
                   <h1 className="text-lg font-semibold ml-4">Shoukath</h1>
@@ -109,7 +146,7 @@ const Details = () => {
                     Chat With Seller
                   </button>
                 </div>
-              </div>
+              </div> */}
             </div>
           </div>
         </div>

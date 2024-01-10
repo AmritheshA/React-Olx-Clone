@@ -1,14 +1,21 @@
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useResolvedPath } from "react-router-dom";
 import { UserAuthConsumer } from "../../Global-Context/AuthContext";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { database } from "../../firebaseConfig";
+import { collection, addDoc } from "firebase/firestore";
 
 const SignUp = () => {
   const [email, setemail] = useState("");
   const [password, setpassword] = useState("");
+  const [userName, setUserName] = useState("");
   const { signUp } = UserAuthConsumer();
   const navigator = useNavigate();
+
+  const handleUserName = (eve) => {
+    setUserName(eve.target.value);
+  };
 
   const handleEmail = (eve) => {
     setemail(eve.target.value);
@@ -21,8 +28,15 @@ const SignUp = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await signUp(email, password);
+      const user = await signUp(email, password,userName);
+
+      await addDoc(collection(database, "users"), {
+        userName: userName,
+        email: email,
+      });
+
       navigator("/");
+      
     } catch (error) {
       toast.error(error.message, {
         position: "top-center",
@@ -43,6 +57,22 @@ const SignUp = () => {
           Welcome To Our Family
         </h2>
         <form onSubmit={handleSubmit}>
+          <div className="mb-6">
+            <label
+              htmlFor="userName"
+              className="block text-sm font-medium text-gray-600"
+            >
+              UserName
+            </label>
+            <input
+              type="text"
+              id="userName"
+              name="userName"
+              onChange={handleUserName}
+              className="mt-1 p-3 w-full border rounded-md focus:outline-none focus:border-olx-blue"
+              placeholder="Enter your username"
+            />
+          </div>
           <div className="mb-6">
             <label
               htmlFor="email"
